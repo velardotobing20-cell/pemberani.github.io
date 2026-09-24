@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dari cowo Pemberani</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg-0: #170a10;
+    --bg-1: #2a1420;
+    --bg-2: #3a1c2a;
+    --gold: #d9b26a;
+    --gold-soft: #f2dfb3;
+    --rose: #e8637f;
+    --rose-deep: #c23a57;
+    --cream: #fbeee4;
+    --ink-soft: rgba(251, 238, 228, 0.66);
+    --ink-faint: rgba(251, 238, 228, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.1);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{
+    scroll-behavior: smooth;
+    scroll-snap-type: y proximity;
+  }
+
+  body{
+    margin: 0;
+    font-family: "Inter", "Segoe UI", sans-serif;
+    color: var(--cream);
+    background: var(--bg-0);
+    overflow-x: hidden;
+  }
+
+  /* ---------- animated background blobs ---------- */
+  .bg-blobs{
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .blob{
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.55;
+    animation: drift 22s ease-in-out infinite alternate;
+  }
+  .blob.b1{
+    width: 46vw; height: 46vw;
+    background: radial-gradient(circle, var(--rose-deep), transparent 70%);
+    top: -12%; left: -10%;
+  }
+  .blob.b2{
+    width: 38vw; height: 38vw;
+    background: radial-gradient(circle, var(--gold), transparent 70%);
+    bottom: -8%; right: -8%;
+    animation-delay: -8s;
+  }
+  .blob.b3{
+    width: 30vw; height: 30vw;
+    background: radial-gradient(circle, var(--bg-2), transparent 75%);
+    top: 40%; left: 60%;
+    animation-delay: -14s;
+  }
+  @keyframes drift{
+    0%   { transform: translate(0,0) scale(1); }
+    100% { transform: translate(4%, 6%) scale(1.08); }
+  }
+
+  /* subtle grain overlay for a more premium feel */
+  .grain{
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .blob{ animation: none; }
+    html{ scroll-behavior: auto; }
+  }
+
+  /* ---------- side nav dots ---------- */
+  .dots{
+    position: fixed;
+    right: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .dots button{
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: rgba(251,238,228,0.25);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.25s ease;
+  }
+  .dots button.active{
+    background: var(--gold);
+    transform: scale(1.35);
+  }
+  @media (max-width: 720px){ .dots{ display: none; } }
+
+  /* ---------- shared section layout ---------- */
+  .section{
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 90px 24px;
+  }
+
+  .eyebrow{
+    font-size: 14px;
+    letter-spacing: 0.03em;
+    color: var(--gold-soft);
+    margin: 0 0 10px;
+  }
+
+  h1, h2{
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  /* ---------- hero ---------- */
+  .hero h1{
+    font-size: clamp(38px, 7vw, 68px);
+    line-height: 1.1;
+    background: linear-gradient(120deg, var(--cream), var(--gold-soft) 45%, var(--rose) 90%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .typewriter{
+    margin-top: 22px;
+    font-size: clamp(16px, 2.4vw, 20px);
+    color: var(--ink-soft);
+    min-height: 1.6em;
+    font-style: italic;
+    font-family: "Fraunces", serif;
+  }
+
+  .typewriter .cursor{
+    display: inline-block;
+    width: 1px;
+    background: var(--gold-soft);
+    margin-left: 2px;
+    animation: blink 0.9s step-end infinite;
+  }
+  @keyframes blink{ 50%{ opacity: 0; } }
+
+  .scroll-cue{
+    position: absolute;
+    bottom: 34px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .scroll-cue span{
+    animation: bob 1.8s ease-in-out infinite;
+  }
+  @keyframes bob{
+    0%, 100%{ transform: translateY(0); }
+    50%{ transform: translateY(6px); }
+  }
+
+  /* ---------- reasons / timeline ---------- */
+  .reasons h2{
+    font-size: clamp(28px, 4.5vw, 40px);
+    margin-bottom: 50px;
+    color: var(--cream);
+  }
+
+  .timeline{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    max-width: 520px;
+    width: 100%;
+    text-align: left;
+    border-left: 1px solid var(--glass-border);
+    padding-left: 30px;
+  }
+
+  .t-item{
+    position: relative;
+    opacity: 0.45;
+    transform: translateX(-6px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .t-item.active{
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .t-dot{
+    position: absolute;
+    left: -36px;
+    top: 4px;
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    background: var(--bg-1);
+    border: 2px solid var(--ink-faint);
+    transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+  }
+  .t-item.active .t-dot{
+    background: var(--gold);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 4px rgba(217, 178, 106, 0.2);
+  }
+
+  .t-item h3{
+    font-family: "Fraunces", serif;
+    font-weight: 500;
+    font-size: 19px;
+    margin: 0 0 6px;
+    color: var(--gold-soft);
+  }
+  .t-item p{
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- gallery ---------- */
+  .gallery h2{
+    font-size: clamp(28px, 4.5vw, 40px);
+    margin-bottom: 46px;
+    color: var(--cream);
+  }
+
+  .polaroids{
+    display: flex;
+    gap: 26px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 780px;
+  }
+
+  .polaroid{
+    background: #fdf9f4;
+    padding: 14px 14px 26px;
+    border-radius: 6px;
+    box-shadow: 0 18px 34px -14px rgba(0,0,0,0.55);
+    width: 190px;
+    margin: 0;
+    transition: transform 0.3s ease;
+  }
+  .polaroid:hover{ transform: translateY(-6px) rotate(0deg) !important; }
+  .polaroid.p1{ transform: rotate(-6deg); }
+  .polaroid.p2{ transform: rotate(3deg); margin-top: 22px; }
+  .polaroid.p3{ transform: rotate(-2deg); }
+
+  .polaroid-img{
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 2px;
+    object-fit: cover;
+    display: block;
+  }
+  .polaroid-img.placeholder{
+    background: linear-gradient(135deg, var(--bg-2), var(--rose-deep));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+  }
+
+  .polaroid figcaption{
+    font-family: "Fraunces", serif;
+    font-style: italic;
+    color: #3a2530;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 12px;
+  }
+
+  /* ---------- question ---------- */
+  .question h2{
+    font-size: clamp(30px, 5.5vw, 46px);
+    line-height: 1.2;
+    color: var(--cream);
+  }
+
+  .message{
+    max-width: 460px;
+    margin: 24px auto 38px;
+    font-size: 16.5px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+  }
+
+  .actions{
+    position: relative;
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    min-height: 64px;
+  }
+
+  button.cta{
+    font-family: "Inter", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 999px;
+    padding: 15px 32px;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.2s ease;
+  }
+
+  #yes-btn{
+    background: linear-gradient(120deg, var(--rose), var(--rose-deep));
+    color: #fff;
+    box-shadow: 0 14px 30px -10px rgba(194, 58, 88, 0.7);
+  }
+  #yes-btn:hover{ transform: translateY(-2px) scale(1.03); }
+
+  #no-btn{
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1.5px solid var(--glass-border);
+    position: relative;
+    transition: transform 0.12s ease, left 0.12s ease, top 0.12s ease, background 0.2s ease;
+  }
+
+  .result{
+    display: none;
+    margin-top: 10px;
+  }
+  .result.show{
+    display: block;
+    animation: pop 0.5s ease;
+  }
+  @keyframes pop{
+    from{ transform: scale(0.85); opacity: 0; }
+    to{ transform: scale(1); opacity: 1; }
+  }
+
+  .result h3{
+    font-family: "Fraunces", serif;
+    color: var(--gold-soft);
+    font-size: 26px;
+    margin: 0 0 10px;
+  }
+  .result p{
+    color: var(--ink-soft);
+    margin: 0;
+    font-size: 15px;
+    max-width: 420px;
+  }
+
+  #confetti-canvas{
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    pointer-events: none;
+  }
+
+  /* cursor sparkle */
+  .sparkle{
+    position: fixed;
+    z-index: 15;
+    pointer-events: none;
+    font-size: 14px;
+    color: var(--gold-soft);
+    animation: sparkle-fade 0.9s ease-out forwards;
+  }
+  @keyframes sparkle-fade{
+    from{ opacity: 0.9; transform: translateY(0) scale(1); }
+    to{ opacity: 0; transform: translateY(-18px) scale(0.6); }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-blobs">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+<div class="grain"></div>
+
+<nav class="dots" id="dots">
+  <button data-target="hero" class="active" aria-label="Bagian 1"></button>
+  <button data-target="reasons" aria-label="Bagian 2"></button>
+  <button data-target="gallery" aria-label="Bagian 3"></button>
+  <button data-target="question" aria-label="Bagian 4"></button>
+</nav>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ================= SCENE 1: HERO ================= -->
+<section class="section hero" id="hero">
+  <p class="eyebrow">Haii 😁</p>
+  <!-- -->
+  <h1>Steevanica Febina Tarigan</h1>
+  <p class="typewriter" id="typewriter"><span id="tw-text"></span><span class="cursor">&nbsp;</span></p>
+  <div class="scroll-cue">Scroll ke bawah<span>↓</span></div>
+</section>
+
+<!-- ================= SCENE 2: ALASAN ================= -->
+<section class="section reasons" id="reasons">
+  <p class="eyebrow">Beberapa alasan</p>
+  <h2>Kenapa bisa secepat ini</h2>
+  <div class="timeline" id="timeline">
+    <!-- GANTI DI SINI: alasan-alasan kamu, boleh tambah/kurangi item -->
+    <div class="t-item">
+      <span class="t-dot"></span>
+      <h3>Alasan pertama</h3>
+      <p> Jujur awalnya ngobrol biasa aja, tapi lama-lama kalau sehari nggak ngobrol
+         rasanya ada yang kurang. Dari situ aku sadar kayaknya perasaanku udah beda.</p>
+    </div>
+    <div class="t-item">
+      <span class="t-dot"></span>
+      <h3>Alasan kedua</h3>
+      <p>Aku nggak cuma mikirin enaknya ngobrol sama kamu sekarang.
+         Aku juga kepikiran kalau kita beneran jalan bareng, kayaknya bakal
+          banyak hal yang bisa kita lewatin bareng.</p>
+    </div>
+    <div class="t-item">
+      <span class="t-dot"></span>
+      <h3>Alasan ketiga</h3>
+      <p>Sama kamu aku nggak terlalu mikirin harus kelihatan keren atau 
+        harus selalu punya bahan obrolan. Aku bisa jadi diri sendiri, 
+        dan ternyata itu bikin aku makin suka.</p>
+    </div>
+    <div class="t-item">
+      <span class="t-dot"></span>
+      <h3>Alasan keempat</h3>
+      <p>Aku nggak bisa janji semuanya bakal selalu gampang. Tapi aku yakin sama alasan 
+        kenapa aku datang dan ngomong ke kamu. Aku pengen coba, bukan sekadar penasaran</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SCENE 3: GALERI ================= -->
+<section class="section gallery" id="gallery">
+  <p class="eyebrow">harus disini foto kita berdua cuma nanti aja deh</p>
+  <h2>JUJUR KAMU CANTIK PAKE BANGET INI MAH</h2>
+  <div class="polaroids">
+    <!-- GANTI DI SINI: ganti div placeholder jadi <img class="polaroid-img" src="foto1.jpg" alt="..."> -->
+   <figure class="polaroid p1">
+  <img class="polaroid-img" src="img/foto1.jpeg" alt="Momen 1">
+  <figcaption>Kalau senyum manis tapi jelek kalau ngambekan hehe</figcaption>
+</figure>
+    <figure class="polaroid p2">
+  <img class="polaroid-img" src="img/foto2.jpeg" alt="Momen 2">
+  <figcaption>kalau bisa sering sering kirim foto ke aku (karena kamu suka foto ya)</figcaption>
+</figure>
+      <figure class="polaroid p3">
+  <img class="polaroid-img" src="img/foto3.jpeg" alt="Momen 3">
+  <figcaption>jangan merendah kak, kamu itu cantik hehe</figcaption>
+</figure>
+  </div>
+</section>
+
+
+<section class="section question" id="question">
+  <p class="eyebrow">TERAKHIR</p>
+  <h2>Maukah kamu<br>jadi pacarku?</h2>
+  <p class="message">
+    Aku udah pikirin ini baik-baik. aku juga tau ini terlalu cepat,
+     mungkin kamu juga nggak nyangka aku bakal nanya gini. 
+    Tapi aku pengen jujur sama perasaanku, dan pengen tau perasaan kamu juga.
+  </p>
+
+  <div class="actions" id="actions">
+    <button class="cta" id="yes-btn">Iya, aku mau 🥹</button>
+    <button class="cta" id="no-btn">Enggak dulu deh</button>
+  </div>    
+
+  <div class="result" id="result">
+    <h3>Makasih ya udah bilang iya 💛</h3>
+    <p>Jangan cintai aku apa adanya, Tuntutlah sesuatu biar kita bisa jalan ke depan.</p>
+  </div>
+</section>
+
+<script>
+  const phrases = [
+    "JANGAN KETAWA YA, INI SERIUS 😠😠",
+    "Berdoa dulu sebelum baca ini",
+    "Baca sampai habis, jangan skip 😉",
+  ];
+  const twEl = document.getElementById('tw-text');
+  let pIndex = 0, cIndex = 0, deleting = false;
+
+  function typeLoop(){
+    const current = phrases[pIndex];
+    if (!deleting){
+      cIndex++;
+      twEl.textContent = current.slice(0, cIndex);
+      if (cIndex === current.length){
+        deleting = true;
+        setTimeout(typeLoop, 1600);
+        return;
+      }
+    } else {
+      cIndex--;
+      twEl.textContent = current.slice(0, cIndex);
+      if (cIndex === 0){
+        deleting = false;
+        pIndex = (pIndex + 1) % phrases.length;
+      }
+    }
+    setTimeout(typeLoop, deleting ? 28 : 45);
+  }
+  typeLoop();
+
+  /* ============ Nav dots + scroll spy ============ */
+  const sections = document.querySelectorAll('.section');
+  const dotButtons = document.querySelectorAll('.dots button');
+
+  dotButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById(btn.dataset.target).scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  const spyObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        dotButtons.forEach(b => b.classList.toggle('active', b.dataset.target === entry.target.id));
+      }
+    });
+  }, { threshold: 0.5 });
+  sections.forEach(s => spyObserver.observe(s));
+
+  /* ============ Timeline reveal ============ */
+  const timelineItems = document.querySelectorAll('.t-item');
+  const tlObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('active');
+    });
+  }, { threshold: 0.4 });
+  timelineItems.forEach(item => tlObserver.observe(item));
+
+  /* ============ Tombol "Enggak dulu deh" kabur ============ */
+  const noBtn = document.getElementById('no-btn');
+  const actionsBox = document.getElementById('actions');
+  const yesBtn = document.getElementById('yes-btn');
+  const result = document.getElementById('result');
+  let dodgeCount = 0;
+
+  function dodge(){
+    const boxRect = actionsBox.getBoundingClientRect();
+    const btnRect = noBtn.getBoundingClientRect();
+    const maxX = Math.max(10, boxRect.width - btnRect.width - 10);
+    const maxY = 44;
+
+    noBtn.style.position = 'absolute';
+    noBtn.style.left = Math.random() * maxX + 'px';
+    noBtn.style.top = (Math.random() * maxY - maxY / 2) + 'px';
+
+    dodgeCount++;
+    if (dodgeCount === 2) noBtn.textContent = 'Eh, tunggu dulu...';
+    if (dodgeCount === 3) noBtn.textContent = 'Yakin nih? 👀';
+    if (dodgeCount === 6) noBtn.textContent = 'tombol satunya lagi aja 😆';
+  }
+  noBtn.addEventListener('mouseenter', dodge);
+  noBtn.addEventListener('click', dodge);
+
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  function resizeCanvas(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  const colors = ['#e8637f', '#d9b26a', '#f2dfb3', '#fbeee4', '#c23a57'];
+  let particles = [];
+
+  function burstConfetti(){
+    particles = [];
+    const count = 140;
+    for (let i = 0; i < count; i++){
+      particles.push({
+        x: canvas.width / 2 + (Math.random() - 0.5) * 60,
+        y: canvas.height * 0.6,
+        vx: (Math.random() - 0.5) * 9,
+        vy: -Math.random() * 11 - 4,
+        size: 5 + Math.random() * 5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rotation: Math.random() * 360,
+        vr: (Math.random() - 0.5) * 12,
+        life: 0
+      });
+    }
+    requestAnimationFrame(animateConfetti);
+  }
+
+  function animateConfetti(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let stillAlive = false;
+    particles.forEach(p => {
+      p.vy += 0.28; // gravity
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rotation += p.vr;
+      p.life++;
+      if (p.y < canvas.height + 20 && p.life < 260){
+        stillAlive = true;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, 1 - p.life / 260);
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+        ctx.restore();
+      }
+    });
+    if (stillAlive){
+      requestAnimationFrame(animateConfetti);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  function playChime(){
+    try{
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const actx = new AudioCtx();
+      const notes = [523.25, 659.25, 783.99, 1046.5]; // C5 E5 G5 C6
+      notes.forEach((freq, i) => {
+        const osc = actx.createOscillator();
+        const gain = actx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0, actx.currentTime + i * 0.12);
+        gain.gain.linearRampToValueAtTime(0.18, actx.currentTime + i * 0.12 + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime + i * 0.12 + 0.5);
+        osc.connect(gain).connect(actx.destination);
+        osc.start(actx.currentTime + i * 0.12);
+        osc.stop(actx.currentTime + i * 0.12 + 0.55);
+      });
+    } catch(e){ /* audio not available, ignore quietly */ }
+  }
+
+  yesBtn.addEventListener('click', () => {
+    result.classList.add('show');
+    actionsBox.style.display = 'none';
+    burstConfetti();
+    playChime();
+  });
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isFinePointer = window.matchMedia('(pointer: fine)').matches;
+  if (isFinePointer && !prefersReducedMotion){
+    let lastSpark = 0;
+    document.addEventListener('mousemove', (e) => {
+      const now = Date.now();
+      if (now - lastSpark < 60) return;
+      lastSpark = now;
+      const sparkle = document.createElement('span');
+      sparkle.className = 'sparkle';
+      sparkle.textContent = Math.random() > 0.5 ? '✦' : '·';
+      sparkle.style.left = e.clientX + 'px';
+      sparkle.style.top = e.clientY + 'px';
+      document.body.appendChild(sparkle);
+      setTimeout(() => sparkle.remove(), 900);
+    });
+  }
+</script>
+
+</body>
+</html>
